@@ -34,7 +34,7 @@ function app() {
 }
 
 function init() {
-    webGLWindow = document.getElementById("webgl_window");
+    webGLWindow = document.getElementById('webgl_window');
 
     renderer = new THREE.WebGLRenderer();
     renderer.setClearColor(0x000000, 0.0);
@@ -63,14 +63,20 @@ function init() {
     scene.add(stars);
 
     var helper_geometry = new THREE.SphereGeometry(0.2, 8, 8);
-    helperClickedPos = new THREE.Mesh(helper_geometry, new THREE.MeshBasicMaterial({
-        color: 0xff0000
-    }));
+    helperClickedPos = new THREE.Mesh(
+        helper_geometry,
+        new THREE.MeshBasicMaterial({
+            color: 0xff0000,
+        }),
+    );
     scene.add(helperClickedPos);
 
-    helperClosestPos = new THREE.Mesh(helper_geometry, new THREE.MeshBasicMaterial({
-        color: 0x00ff00
-    }));
+    helperClosestPos = new THREE.Mesh(
+        helper_geometry,
+        new THREE.MeshBasicMaterial({
+            color: 0x00ff00,
+        }),
+    );
     scene.add(helperClosestPos);
 
     issLoader = new ISSLOADER.DataLoader();
@@ -79,18 +85,17 @@ function init() {
 
     issLoader.onMissionLoaded = function (mn) {
         ++missionsLoaded;
-        var str = "ISS Photo Explorer - Loading mission " + missionsLoaded.toString() + "/" + num_missions.toString();
+        var str = 'ISS Photo Explorer - Loading mission ' + missionsLoaded.toString() + '/' + num_missions.toString();
         document.getElementById('loading_overlay_text').textContent = str;
     };
 
     issLoader.load();
     issLoader.onDataLoaded = function (iss_data) {
-
         missionData = iss_data;
 
+        console.log(missionData);
         for (var i = 0; i < iss_data.length; ++i) {
-
-            var hue = (i / iss_data.length);
+            var hue = i / iss_data.length;
             missionGeometry[i] = createMissionGeometry(iss_data[i], hue);
             missionVisible[i] = true;
             totalPhotos += iss_data[i].length;
@@ -112,43 +117,48 @@ function init() {
         on_clicked_callback: onClicked,
         right_click_to_select: true,
         start_lat: 37.520925,
-        start_lng: -122.309460,
+        start_lng: -122.30946,
         start_distance: 300,
         min_distance: 120.0,
         max_distance: 450.0,
-        mesh: globe
+        mesh: globe,
     });
 
     window.addEventListener('resize', onWindowResize, false);
 }
 
 function createGlobe(radius, segments) {
-    return new THREE.Mesh(new THREE.SphereGeometry(radius, segments, segments), new THREE.MeshPhongMaterial({
-        map: THREE.ImageUtils.loadTexture('img/surface.jpg'),
-        bumpMap: THREE.ImageUtils.loadTexture('img/elevation.jpg'),
-        bumpScale: 0.020,
-        specularMap: THREE.ImageUtils.loadTexture('img/specular.png'),
-        specular: new THREE.Color(0x666666)
-    }));
+    return new THREE.Mesh(
+        new THREE.SphereGeometry(radius, segments, segments),
+        new THREE.MeshPhongMaterial({
+            map: THREE.ImageUtils.loadTexture('img/surface.jpg'),
+            bumpMap: THREE.ImageUtils.loadTexture('img/elevation.jpg'),
+            bumpScale: 0.02,
+            specularMap: THREE.ImageUtils.loadTexture('img/specular.png'),
+            specular: new THREE.Color(0x666666),
+        }),
+    );
 }
 
 function createStarField(radius, segments) {
-    return new THREE.Mesh(new THREE.SphereGeometry(radius, segments, segments), new THREE.MeshBasicMaterial({
-        map: THREE.ImageUtils.loadTexture('img/starfield.png'),
-        side: THREE.BackSide
-    }));
+    return new THREE.Mesh(
+        new THREE.SphereGeometry(radius, segments, segments),
+        new THREE.MeshBasicMaterial({
+            map: THREE.ImageUtils.loadTexture('img/starfield.png'),
+            side: THREE.BackSide,
+        }),
+    );
 }
 
 function setHelperPos(type, lat, lng) {
     var helper_radius = radius * issHeightMultiplier;
     var helper_pos = latlngPosFromLatLng(lat, lng, helper_radius);
 
-    if (type === "closest") {
+    if (type === 'closest') {
         helperClosestPos.position.x = helper_pos.x;
         helperClosestPos.position.y = helper_pos.y;
         helperClosestPos.position.z = helper_pos.z;
-    } else
-    if (type === "click") {
+    } else if (type === 'click') {
         helperClickedPos.position.x = helper_pos.x;
         helperClickedPos.position.y = helper_pos.y;
         helperClickedPos.position.z = helper_pos.z;
@@ -156,8 +166,8 @@ function setHelperPos(type, lat, lng) {
 }
 
 function latlngPosFromLatLng(lat, lng, radius) {
-    var phi = (90 - lat) * Math.PI / 180;
-    var theta = (360 - lng) * Math.PI / 180;
+    var phi = ((90 - lat) * Math.PI) / 180;
+    var theta = ((360 - lng) * Math.PI) / 180;
     var x = radius * Math.sin(phi) * Math.cos(theta);
     var y = radius * Math.cos(phi);
     var z = radius * Math.sin(phi) * Math.sin(theta);
@@ -166,12 +176,11 @@ function latlngPosFromLatLng(lat, lng, radius) {
         theta: theta,
         x: x,
         y: y,
-        z: z
+        z: z,
     };
 }
 
 function createMissionGeometry(mission, mission_hue) {
-
     var geometry = new THREE.BufferGeometry();
 
     var length = mission.length;
@@ -182,11 +191,10 @@ function createMissionGeometry(mission, mission_hue) {
     var color = new THREE.Color();
 
     for (var i = 0; i < length; ++i) {
-
         var lat = mission[i][0];
         var lng = mission[i][1];
-        var phi = (90.0 - lat) * Math.PI / 180.0;
-        var theta = (360.0 - lng) * Math.PI / 180.0;
+        var phi = ((90.0 - lat) * Math.PI) / 180.0;
+        var theta = ((360.0 - lng) * Math.PI) / 180.0;
 
         var pos = latlngPosFromLatLng(lat, lng, radius * issHeightMultiplier);
 
@@ -210,23 +218,23 @@ function createMissionGeometry(mission, mission_hue) {
     var attributes = {
         size: {
             type: 'f',
-            value: null
+            value: null,
         },
         customColor: {
             type: 'c',
-            value: null
-        }
+            value: null,
+        },
     };
 
     var uniforms = {
         color: {
-            type: "c",
-            value: new THREE.Color(0xffffff)
+            type: 'c',
+            value: new THREE.Color(0xffffff),
         },
         texture: {
-            type: "t",
-            value: THREE.ImageUtils.loadTexture("img/point.png")
-        }
+            type: 't',
+            value: THREE.ImageUtils.loadTexture('img/point.png'),
+        },
     };
 
     var shader_material = new THREE.ShaderMaterial({
@@ -237,7 +245,7 @@ function createMissionGeometry(mission, mission_hue) {
         blending: THREE.AdditiveBlending,
         depthTest: true,
         depthWrite: false,
-        transparent: true
+        transparent: true,
     });
 
     return new THREE.PointCloud(geometry, shader_material);
@@ -246,11 +254,11 @@ function createMissionGeometry(mission, mission_hue) {
 function setState(node, state) {
     var mission_number = parseInt(node.id, 10) - 1;
     if (state) {
-        node.id = node.id.replace("_off", "_on");
+        node.id = node.id.replace('_off', '_on');
         node.style.opacity = 1.0;
         scene.add(missionGeometry[mission_number]);
     } else {
-        node.id = node.id.replace("_on", "_off");
+        node.id = node.id.replace('_on', '_off');
         node.style.opacity = 0.25;
         scene.remove(missionGeometry[mission_number]);
     }
@@ -266,7 +274,7 @@ function setState(node, state) {
 }
 
 function onClickImage(node) {
-    if (node.id.indexOf("_off") === -1) {
+    if (node.id.indexOf('_off') === -1) {
         setState(node, false);
     } else {
         setState(node, true);
@@ -274,7 +282,7 @@ function onClickImage(node) {
 }
 
 function onRightClickImage(node) {
-    if (node.id.indexOf("_off") === -1) {
+    if (node.id.indexOf('_off') === -1) {
         setAll(false);
     } else {
         setAll(true);
@@ -293,11 +301,10 @@ function setAll(state) {
 function getIssHeightMultiplier() {
     var radius_earth_km = 3959.0;
     var mean_height_iss_km = 354.4;
-    return 1 + (mean_height_iss_km / radius_earth_km);
+    return 1 + mean_height_iss_km / radius_earth_km;
 }
 
 function onWindowResize() {
-
     camera.aspect = webGLWindow.offsetWidth / webGLWindow.offsetHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(webGLWindow.offsetWidth, webGLWindow.offsetHeight);
@@ -315,7 +322,6 @@ function swapWindow() {
     isWindowSwapped = !isWindowSwapped;
 
     if (isWindowSwapped) {
-
     }
 
     gotoPhoto(0);
@@ -337,12 +343,11 @@ function full_screen() {
 
 function addISS() {
     var loader = new THREE.ColladaLoader();
-    loader.load("models/iss.dae", function (collada) {
-
+    loader.load('models/iss.dae', function (collada) {
         issModel = collada.scene;
         issModel.scale.x = issModel.scale.y = issModel.scale.z = 0.1;
         issModel_material = new THREE.MeshPhongMaterial({
-            color: 0xffffff
+            color: 0xffffff,
         });
         issModel.traverse(function (child) {
             if (child instanceof THREE.Mesh) {
@@ -351,31 +356,30 @@ function addISS() {
         });
         positionISS(true, false);
         scene.add(issModel);
-        if (!localStorage.getItem("runOnce")) {
-            localStorage.setItem("runOnce", true);
+        if (!localStorage.getItem('runOnce')) {
+            localStorage.setItem('runOnce', true);
             showAbout(true);
         }
     });
 }
 
 function getQueryParameterByName(name) {
-    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-    var regexS = "[\\?&]" + name + "=([^&#]*)";
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regexS = '[\\?&]' + name + '=([^&#]*)';
     var regex = new RegExp(regexS);
     var results = regex.exec(window.location.search);
-    if (results === null) return "";
-    else return decodeURIComponent(results[1].replace(/\+/g, " "));
+    if (results === null) return '';
+    else return decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
 
 function shareURL() {
-    var url = "index.html?m=" + (curMission + 1) + "&p=" + (curPhoto + 1);
+    var url = 'index.html?m=' + (curMission + 1) + '&p=' + (curPhoto + 1);
     window.open(url);
 }
 
 function positionISS(rotate_globe, force_to_iss) {
-
     $.ajax({
-        url: "http://api.open-notify.org/iss-now.json",
+        url: 'http://api.open-notify.org/iss-now.json',
         dataType: 'jsonp',
         success: function (data, text) {
             var iss_lat = data.iss_position.latitude;
@@ -389,15 +393,15 @@ function positionISS(rotate_globe, force_to_iss) {
             issModel.position.y = pos.y;
             issModel.position.z = pos.z;
             if (rotate_globe) {
-                if ( force_to_iss) {
+                if (force_to_iss) {
                     setClosestPhoto(data.iss_position.latitude, data.iss_position.longitude);
                     globeManipulator.set_lat_lng(data.iss_position.latitude, data.iss_position.longitude);
                 } else {
                     var start_mission = -1;
-                    var start_mission_str = getQueryParameterByName("m").toLowerCase();
+                    var start_mission_str = getQueryParameterByName('m').toLowerCase();
                     if (start_mission_str.length !== 0) start_mission = parseInt(start_mission_str, 10);
                     var start_photo = -1;
-                    var start_photo_str = getQueryParameterByName("p").toLowerCase();
+                    var start_photo_str = getQueryParameterByName('p').toLowerCase();
                     if (start_photo_str.length !== 0) start_photo = parseInt(start_photo_str, 10);
                     if (start_mission !== -1 && start_photo !== -1) {
                         if (start_mission >= 1 && start_mission <= missionData.length) {
@@ -405,7 +409,11 @@ function positionISS(rotate_globe, force_to_iss) {
                                 curMission = start_mission - 1;
                                 curPhoto = start_photo - 1;
                                 numPhotos = missionData[curMission].length;
-                                setHelperPos("closest", missionData[curMission][curPhoto][0], missionData[curMission][curPhoto][1]);
+                                setHelperPos(
+                                    'closest',
+                                    missionData[curMission][curPhoto][0],
+                                    missionData[curMission][curPhoto][1],
+                                );
                                 gotoPhoto(0);
                             }
                         }
@@ -415,26 +423,29 @@ function positionISS(rotate_globe, force_to_iss) {
                     }
                 }
             }
-            setTimeout(function () {
-                positionISS(false, false);
-            }, 1 * 30 * 1000);
+            setTimeout(
+                function () {
+                    positionISS(false, false);
+                },
+                1 * 30 * 1000,
+            );
         },
         error: function (request, status, error) {
-            console.warn("Unable to get ISS position: ", error);
-        }
+            console.warn('Unable to get ISS position: ', error);
+        },
     });
 }
 
 function getDistanceFromLatLonInKmFast(lat1, lon1, lat2, lon2) {
     var R = 6371;
     var x = (lon2 - lon1) * Math.cos((lat1 + lat2) / 2);
-    var y = (lat2 - lat1);
+    var y = lat2 - lat1;
     var d = Math.sqrt(x * x + y * y) * R;
     return d;
 }
 
 function setClosestPhoto(lat, lng) {
-    var deg2rad_const = (Math.PI / 180);
+    var deg2rad_const = Math.PI / 180;
     var lat1 = lat * deg2rad_const;
     var lng1 = lng * deg2rad_const;
     var min_dist = Infinity;
@@ -445,8 +456,8 @@ function setClosestPhoto(lat, lng) {
     for (var i = 0; i < missionData.length; ++i) {
         if (missionVisible[i]) {
             for (var j = 0; j < missionData[i].length; ++j) {
-                lat2 = (missionData[i][j][0]) * deg2rad_const;
-                lng2 = (missionData[i][j][1]) * deg2rad_const;
+                lat2 = missionData[i][j][0] * deg2rad_const;
+                lng2 = missionData[i][j][1] * deg2rad_const;
                 var dist = getDistanceFromLatLonInKmFast(lat1, lng1, lat2, lng2);
                 if (dist < min_dist) {
                     min_i = i;
@@ -456,11 +467,11 @@ function setClosestPhoto(lat, lng) {
             }
         }
     }
-    setHelperPos("click", lat, lng);
+    setHelperPos('click', lat, lng);
     if (min_i === -1 || min_j === -1) {
         return;
     }
-    setHelperPos("closest", missionData[min_i][min_j][0], missionData[min_i][min_j][1]);
+    setHelperPos('closest', missionData[min_i][min_j][0], missionData[min_i][min_j][1]);
     curMission = min_i;
     curPhoto = min_j;
     numPhotos = missionData[min_i].length;
@@ -468,7 +479,6 @@ function setClosestPhoto(lat, lng) {
 }
 
 function setPhotoImgSrc(url) {
-
     var photo_img = document.getElementById('photo_img');
     if (photo_img) {
         photo_img.src = url;
@@ -476,11 +486,14 @@ function setPhotoImgSrc(url) {
 }
 
 function updateURLandTwitter() {
-    var url = "?m=" + (curMission+1) + "&p=" + (curPhoto+1);
+    var url = '?m=' + (curMission + 1) + '&p=' + (curPhoto + 1);
     window.history.replaceState('', '', url);
 
-    var elem = document.getElementById("twitter");
-    elem.innerHTML = '<a href="https://twitter.com/share" class="twitter-share-button" data-via="callumprentice" data-size="large" data-related="callumprentice" data-hashtags="spaceapps" data-url="' + window.location.href + '">Tweet</a>';
+    var elem = document.getElementById('twitter');
+    elem.innerHTML =
+        '<a href="https://twitter.com/share" class="twitter-share-button" data-via="callumprentice" data-size="large" data-related="callumprentice" data-hashtags="spaceapps" data-url="' +
+        window.location.href +
+        '">Tweet</a>';
     twttr.widgets.load();
 }
 
@@ -489,15 +502,15 @@ function gotoPhoto(delta) {
     if (curPhoto === numPhotos) curPhoto = 0;
     if (curPhoto < 0) curPhoto = numPhotos - 1;
 
-    var image_size = "small";
+    var image_size = 'small';
     if (isWindowSwapped) {
-        image_size = "large";
+        image_size = 'large';
     }
 
     var url = buildPhotoURL(image_size, curMission, curPhoto);
     setPhotoImgSrc(url);
 
-    setHelperPos("closest", missionData[curMission][curPhoto][0], missionData[curMission][curPhoto][1]);
+    setHelperPos('closest', missionData[curMission][curPhoto][0], missionData[curMission][curPhoto][1]);
     globeManipulator.set_lat_lng(missionData[curMission][curPhoto][0], missionData[curMission][curPhoto][1]);
 
     updateURLandTwitter();
@@ -505,44 +518,43 @@ function gotoPhoto(delta) {
 
 function buildPhotoURL(size, mission_num, mission_photo_num) {
     var photoid = missionData[mission_num][mission_photo_num][2];
-    var mission = "ISS" + ("00" + (mission_num + 1)).slice(-3);
-    var mrf = mission + "-E-" + photoid;
-    var photo_thumb_url = "http://eol.jsc.nasa.gov/DatabaseImages/ESC/" + size + "/" + mission + "/" + mrf + ".jpg";
+    var mission = 'ISS' + ('00' + (mission_num + 1)).slice(-3);
+    var mrf = mission + '-E-' + photoid;
+    var photo_thumb_url = 'http://eol.jsc.nasa.gov/DatabaseImages/ESC/' + size + '/' + mission + '/' + mrf + '.jpg';
     return photo_thumb_url;
 }
 
 function expandPhoto() {
-    var large_photo_url = buildPhotoURL("large", curMission, curPhoto);
+    var large_photo_url = buildPhotoURL('large', curMission, curPhoto);
     window.open(large_photo_url);
 }
 
 function numberWithCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 function updatePhotoLabel() {
-    var str = "&nbsp;Mission ";
-    str += (curMission + 1);
-    str += ", photo ";
+    var str = '&nbsp;Mission ';
+    str += curMission + 1;
+    str += ', photo ';
     str += numberWithCommas(curPhoto + 1);
-    str += " of " + numberWithCommas(numPhotos);
-    str += " (Click to enlarge)";
-    str += "<br>&nbsp;";
-    str += numberWithCommas(totalPhotos) + " photos total, " + numberWithCommas(selectedPhotos) + " selected";
+    str += ' of ' + numberWithCommas(numPhotos);
+    str += ' (Click to enlarge)';
+    str += '<br>&nbsp;';
+    str += numberWithCommas(totalPhotos) + ' photos total, ' + numberWithCommas(selectedPhotos) + ' selected';
 
-    var element = document.getElementById("photo_label");
+    var element = document.getElementById('photo_label');
     if (element) {
         element.innerHTML = str;
     }
 }
 
 function onPhotoLoaded() {
+    var image_window_width = document.getElementById('image_window').offsetWidth;
+    var image_window_height = document.getElementById('image_window').offsetHeight;
 
-    var image_window_width = document.getElementById("image_window").offsetWidth;
-    var image_window_height = document.getElementById("image_window").offsetHeight;
-
-    var image_width = document.getElementById("photo_img").naturalWidth;
-    var image_height = document.getElementById("photo_img").naturalHeight;
+    var image_width = document.getElementById('photo_img').naturalWidth;
+    var image_height = document.getElementById('photo_img').naturalHeight;
 
     var new_width = image_width;
     var new_height = image_height;
@@ -557,10 +569,10 @@ function onPhotoLoaded() {
         new_height = image_height * (image_window_width / image_width);
     }
 
-    var img_element = document.getElementById("photo_img");
+    var img_element = document.getElementById('photo_img');
     if (img_element && img_element.style) {
-        img_element.style.width = new_width + "px";
-        img_element.style.height = new_height + "px";
+        img_element.style.width = new_width + 'px';
+        img_element.style.height = new_height + 'px';
     }
 
     updatePhotoLabel();
@@ -574,30 +586,29 @@ function onClicked(event) {
 
 function showAbout(visible) {
     if (visible) {
-        document.getElementById("about_box_bkg").className = "show";
-        document.getElementById("about_box").className = "show";
-        document.getElementById("about_box").style.pointerEvents = "all";
-        showHelpContents("about_text")
-
+        document.getElementById('about_box_bkg').className = 'show';
+        document.getElementById('about_box').className = 'show';
+        document.getElementById('about_box').style.pointerEvents = 'all';
+        showHelpContents('about_text');
     } else {
-        document.getElementById("about_box_bkg").className = "hide";
-        document.getElementById("about_box").className = "hide";
-        document.getElementById("about_box").style.pointerEvents = "none";
-        showHelpContents("none")
+        document.getElementById('about_box_bkg').className = 'hide';
+        document.getElementById('about_box').className = 'hide';
+        document.getElementById('about_box').style.pointerEvents = 'none';
+        showHelpContents('none');
     }
 }
 
 function showHelpContents(id) {
-    document.getElementById('about_text').className = "hide help_contents mouse_off";
-    document.getElementById('controls_text_1').className = "hide help_contents mouse_off";
-    document.getElementById('controls_text_2').className = "hide help_contents mouse_off";
-    document.getElementById('future_text').className = "hide help_contents mouse_off";
-    document.getElementById('credits_text').className = "hide help_contents mouse_off";
-    document.getElementById('contact_text').className = "hide help_contents mouse_off";
+    document.getElementById('about_text').className = 'hide help_contents mouse_off';
+    document.getElementById('controls_text_1').className = 'hide help_contents mouse_off';
+    document.getElementById('controls_text_2').className = 'hide help_contents mouse_off';
+    document.getElementById('future_text').className = 'hide help_contents mouse_off';
+    document.getElementById('credits_text').className = 'hide help_contents mouse_off';
+    document.getElementById('contact_text').className = 'hide help_contents mouse_off';
 
     var element = document.getElementById(id);
     if (element) {
-        document.getElementById(id).className = "show help_contents mouse_on";
+        document.getElementById(id).className = 'show help_contents mouse_on';
     }
 }
 
